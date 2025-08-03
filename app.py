@@ -48,7 +48,7 @@ if st.button("🚂 Predict Next Station Delay"):
 st.header("📊 Visual Insights")
 
 if st.checkbox("Show Top 10 Delayed Stations"):
-    station_delay = df.groupby('station_name')['delay_arrival'].mean().sort_values(ascending=False).head(10)
+    station_delay = df.groupby('station_code')['delay_arrival'].mean().sort_values(ascending=False).head(10)
     fig, ax = plt.subplots()
     station_delay.plot(kind='bar', color='crimson', ax=ax)
     ax.set_title("Top 10 Delayed Stations")
@@ -72,7 +72,7 @@ if st.checkbox("View Ripple Effect Data Table"):
 st.header("📊 Visual Insights")
 
 if st.checkbox("Show Top 10 Delayed Stations"):
-    station_delay = df.groupby('station_name')['delay_arrival'].mean().sort_values(ascending=False).head(10)
+    station_delay = df.groupby('station_code')['delay_arrival'].mean().sort_values(ascending=False).head(10)
     fig, ax = plt.subplots()
     station_delay.plot(kind='bar', color='crimson', ax=ax)
     ax.set_title("Top 10 Delayed Stations")
@@ -103,7 +103,7 @@ if st.checkbox("📍 Show Delay Timeline for Selected Train"):
     # Optional: Use station names instead of order
     if 'station_name' in train_df.columns:
         ax3.set_xticks(train_df['station_order'])
-        ax3.set_xticklabels(train_df['station_name'], rotation=45, ha='right')
+        ax3.set_xticklabels(train_df['station_code'], rotation=45, ha='right')
 
     ax3.set_title(f"Delay Timeline - Train {selected_train}")
     ax3.set_xlabel("Station Order")
