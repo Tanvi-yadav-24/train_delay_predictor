@@ -48,13 +48,83 @@ if st.button("🚂 Predict Next Station Delay"):
 st.header("📊 Visual Insights")
 
 if st.checkbox("Show Top 10 Delayed Stations"):
-    station_delay = df.groupby('station_code')['delay_arrival'].mean().sort_values(ascending=False).head(10)
-    st.bar_chart(station_delay)
+    station_delay = df.groupby('station_name')['delay_arrival'].mean().sort_values(ascending=False).head(10)
+    fig, ax = plt.subplots()
+    station_delay.plot(kind='bar', color='crimson', ax=ax)
+    ax.set_title("Top 10 Delayed Stations")
+    ax.set_ylabel("Average Delay (min)")
+    ax.set_xlabel("Station")
+    st.pyplot(fig)
 
 if st.checkbox("Show Most Disruptive Trains"):
     ripple_df = pd.read_csv("ripple_pairs.csv")  # Created from Step 4
     ripple_causes = ripple_df.groupby('lead_train')['target_train'].count().sort_values(ascending=False).head(10)
-    st.bar_chart(ripple_causes)
+    fig2, ax2 = plt.subplots()
+    ripple_causes.plot(kind='bar', color='darkgreen', ax=ax2)
+    ax2.set_title("Most Disruptive Trains (Causing Ripple)")
+    ax2.set_ylabel("No. of Trains Affected")
+    ax2.set_xlabel("Lead Train ID")
+    st.pyplot(fig2)
 
+if st.checkbox("View Ripple Effect Data Table"):
+    st.dataframe(ripple_df.head(20))
+    
+st.header("📊 Visual Insights")
+
+if st.checkbox("Show Top 10 Delayed Stations"):
+    station_delay = df.groupby('station_name')['delay_arrival'].mean().sort_values(ascending=False).head(10)
+    fig, ax = plt.subplots()
+    station_delay.plot(kind='bar', color='crimson', ax=ax)
+    ax.set_title("Top 10 Delayed Stations")
+    ax.set_ylabel("Average Delay (min)")
+    ax.set_xlabel("Station")
+    st.pyplot(fig)
+
+if st.checkbox("Show Most Disruptive Trains"):
+    ripple_df = pd.read_csv("ripple_pairs.csv")
+    ripple_causes = ripple_df.groupby('lead_train')['target_train'].count().sort_values(ascending=False).head(10)
+    fig2, ax2 = plt.subplots()
+    ripple_causes.plot(kind='bar', color='darkgreen', ax=ax2)
+    ax2.set_title("Most Disruptive Trains (Causing Ripple)")
+    ax2.set_ylabel("No. of Trains Affected")
+    ax2.set_xlabel("Lead Train ID")
+    st.pyplot(fig2)
+
+if st.checkbox("View Ripple Effect Data Table"):
+    st.dataframe(ripple_df.head(20))
+
+if st.checkbox("📍 Show Delay Timeline for Selected Train"):
+    selected_train = st.selectbox("Choose a Train for Timeline", df['train_id'].unique())
+    train_df = df[df['train_id'] == selected_train].sort_values('station_order')
+
+    fig3, ax3 = plt.subplots()
+    ax3.plot(train_df['station_order'], train_df['delay_arrival'], marker='o', linestyle='-', color='blue')
+    
+    # Optional: Use station names instead of order
+    if 'station_name' in train_df.columns:
+        ax3.set_xticks(train_df['station_order'])
+        ax3.set_xticklabels(train_df['station_name'], rotation=45, ha='right')
+
+    ax3.set_title(f"Delay Timeline - Train {selected_train}")
+    ax3.set_xlabel("Station Order")
+    ax3.set_ylabel("Delay (minutes)")
+    st.pyplot(fig3)
+
+import networkx as nx
+
+if st.checkbox("🌐 Visualize Ripple Network"):
+    ripple_df = pd.read_csv("ripple_pairs.csv")
+    G = nx.DiGraph()
+
+    # Add edges from ripple data
+    for _, row in ripple_df.iterrows():
+        G.add_edge(row['lead_train'], row['target_train'])
+
+    fig4, ax4 = plt.subplots(figsize=(10, 6))
+    pos = nx.spring_layout(G, seed=42)
+    nx.draw(G, pos, with_labels=True, node_size=700, node_color="skyblue", font_size=10, ax=ax4, arrows=True)
+    ax4.set_title("Ripple Delay Network (Lead → Affected Train)")
+    st.pyplot(fig4)
+ 
 st.caption("Made with ❤️ for Datathon")
 
