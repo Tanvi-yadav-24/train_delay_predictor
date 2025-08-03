@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 
 # Load data and model
 df = pd.read_csv("train_data.csv")  # Preprocessed data
+ripple_df = pd.read_csv("ripple_pairs.csv")
 model = joblib.load("delay_predictor.pkl")  # Trained RandomForest model
 
 # Title and intro
