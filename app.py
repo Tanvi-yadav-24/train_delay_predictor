@@ -72,7 +72,7 @@ if st.checkbox("View Ripple Effect Data Table"):
     
 st.header("📊 Visual Insights")
 
-if st.checkbox("Show Top 10 Delayed Stations"):
+if st.checkbox("Show Top 10 Delayed Stations", key="delayed_stations"):
     station_delay = df.groupby('station_code')['delay_arrival'].mean().sort_values(ascending=False).head(10)
     fig, ax = plt.subplots()
     station_delay.plot(kind='bar', color='crimson', ax=ax)
@@ -81,7 +81,7 @@ if st.checkbox("Show Top 10 Delayed Stations"):
     ax.set_xlabel("Station")
     st.pyplot(fig)
 
-if st.checkbox("Show Most Disruptive Trains"):
+if st.checkbox("Show Most Disruptive Trains", key="disruptive_trains"):
     ripple_df = pd.read_csv("ripple_pairs.csv")
     ripple_causes = ripple_df.groupby('lead_train')['target_train'].count().sort_values(ascending=False).head(10)
     fig2, ax2 = plt.subplots()
@@ -91,7 +91,7 @@ if st.checkbox("Show Most Disruptive Trains"):
     ax2.set_xlabel("Lead Train ID")
     st.pyplot(fig2)
 
-if st.checkbox("View Ripple Effect Data Table"):
+if st.checkbox("View Ripple Effect Data Table", key="ripple_table"):
     st.dataframe(ripple_df.head(20))
 
 if st.checkbox("📍 Show Delay Timeline for Selected Train"):
